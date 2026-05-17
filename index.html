@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Corporate App Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="cyber-radio.css">
+</head>
+
+<body>
+    <!-- Loading Overlay
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <div class="logo-circle">
+                    <i class="fas fa-terminal"></i>
+                </div>
+                <div class="loading-rings">
+                    <div class="ring ring-1"></div>
+                    <div class="ring ring-2"></div>
+                    <div class="ring ring-3"></div>
+                </div>
+            </div>
+            <h1 class="loading-title">Corporate Dashboard</h1>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p class="loading-text">Inicjalizacja systemu...</p>
+        </div>
+    </div> -->
+
+    <div id="root"></div>
+
+    <script>
+        // Authentication system constants
+        const authSystem = {
+            users: [
+                { username: "admin", password: "admin123", role: "administrator" },
+                { username: "user", password: "user123", role: "user" },
+                { username: "manager", password: "manager123", role: "manager" }
+            ],
+            sessionKey: "corporate_dashboard_session",
+            isLoggedIn: false,
+            currentUser: null
+        };
+
+        // Data constants for the Corporate App Dashboard
+        const leftGroups = [
+            {
+                columns: [
+                    [
+                        { title: "CHAT OPS", icon: "fa-comments", url: "https://chatops.aces.amazon.dev/" },
+                        { title: "QUIP", icon: "fa-file-alt", url: "https://quip-amazon.com/browse" },
+                    ],
+                    [
+                        { title: "CONSOLE HARMONY", icon: "fa-terminal", url: "https://console.harmony.a2z.com/internal-ai-assistant/" },
+                        { title: "EXCEL IN", icon: "fa-file-excel", url: "https://amazonpol.sharepoint.com/sites/wro5-check-in/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2Fwro5%2Dcheck%2Din%2FShared%20Documents%2F2026&viewid=05dc9ef1%2D01dc%2D4772%2Da176%2D7a040c83d4de" },
+                    ],
+                ],
+                markerColor: "orange-light",
+            },
+            {
+                columns: [
+                    [
+                        { title: "SEZAM", icon: "fa-door-open", url: "https://trans-logistics-eu.amazon.com/yms/sesameGateConsole#/WRO5" },
+                        { title: "YARD MANAGEMENT", icon: "fa-map-marked-alt", url: "https://trans-logistics-eu.amazon.com/yms/shipclerk/#/yard" },
+                    ],
+                    [
+                        { title: "EVENT HISTORY", icon: "fa-clock", url: "https://trans-logistics-eu.amazon.com/yms/eventHistory#/eventReport?yard=WRO5" },
+                        { title: "FMC ", icon: "fa-truck", url: "https://trans-logistics-eu.amazon.com/fmc/execution" },
+                        { title: "FMC TRACK", icon: "fa-route", url: "https://track.relay.amazon.dev/" },
+                    ],
+                ],
+                markerColor: "lime",
+            },
+            {
+                columns: [
+                    [
+                        { title: "OUTBOUND", icon: "fa-truck-loading", url: "https://trans-logistics-eu.amazon.com/ssp/dock/hrz/ob" },
+                        { title: "GTDR", icon: "fa-mobile-alt", url: "https://www.amazonlogistics.eu/gtdr/checklist" },
+                    ],
+                    [
+                        { title: "YARD 360", icon: "fa-chart-pie", url: "https://trans-logistics-eu.amazon.com/yms/yard360/appointments" },
+                        { title: "PANORAMA", icon: "fa-binoculars", url: "https://sl-panorama.ots.amazon.dev/?models=wro5" },
+                    ],
+                ],
+                markerColor: "black",
+            },
+            {
+                columns: [
+                    [
+                        { title: "M365", icon: "fa-windows", url: "https://m365.cloud.microsoft/search/" },
+                        { title: "OUTLOOK", icon: "fa-envelope", url: "https://outlook.office.com/" },
+                    ],
+                    [
+                        { title: "SLACK", icon: "fa-comments", url: "https://slack.com/" },
+                        { title: "Markdown", icon: "fa-box", url: "https://mdcode.carrd.co/" },
+                    ],
+                ],
+                markerColor: "cyan",
+            },
+        ];
+
+        const rightGroups = [
+            {
+                columns: [
+                    [
+                        { title: "DEVICE ACTIVATION", icon: "fa-mobile", url: "https://activate.amazon-corp.com/" },
+                        { title: "PASSWORD RESET", icon: "fa-unlock-alt", url: "https://password-v2.corp.amazon.com/" },
+                    ],
+                ],
+                markerColor: "gray",
+            },
+            {
+                columns: [
+                    [
+                        { title: "DOCKMASTER SEARCH", icon: "fa-search", url: "https://fc-inbound-dock-hub-eu.aka.amazon.com/en_US/#/dockmaster/search/WRO5/appointmentSearch" },
+                        { title: "DOCKMASTER", icon: "fa-ship", url: "https://fc-inbound-dock-hub-eu.aka.amazon.com/en_US/#/dockmaster/dayschedule/WRO5" },
+                    ],
+                ],
+                markerColor: "orange",
+            },
+            {
+                columns: [
+                    [
+                        { title: "ISSUES", icon: "fa-bug", url: "https://issues.amazon.com/" },
+                        { title: "PERMISSIONS", icon: "fa-user-shield", url: "https://permissions.amazon.com/" },
+                    ],
+                ],
+                markerColor: "blue",
+            },
+        ];
+
+        const additionalGroups = [
+            {
+                columns: [
+                    [
+                        { title: "FCLM PORTAL", icon: "fa-chart-line", url: "https://fclm-portal.amazon.com/reports/processPathRollup?warehouseId=WRO5&shiftRollup=1&subPage=Ship" },
+                        { title: "AAP", icon: "fa-file-alt", url: "https://aap-eu.corp.amazon.com/page/2366b62e-207b-4b93-8e6d-248aa1dff8a0" },
+                    ],
+                ],
+                markerColor: "purple",
+            },
+        ];
+
+        // Make data available globally
+        window.authSystem = authSystem;
+        window.leftGroups = leftGroups;
+        window.rightGroups = rightGroups;
+        window.additionalGroups = additionalGroups;
+    </script>
+
+    <script src="addons.js"></script>
+    <script type="module" src="system-theme-background.js"></script>
+    <script src="cyber-radio.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('[draggable="true"]').forEach(el => {
+                el.removeAttribute('draggable');
+            });
+
+            document.addEventListener('dragstart', function (e) {
+                e.preventDefault();
+                return false;
+            });
+
+            document.addEventListener('drop', function (e) {
+                e.preventDefault();
+                return false;
+            });
+
+            document.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                return false;
+            });
+        });
+    </script>
+
+</body>
+
+</html>

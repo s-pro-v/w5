@@ -1,10 +1,12 @@
 const SYSTEM_BACKGROUND_LOW_POWER = true;
 
 function ensureBackgroundStyles() {
-    if (document.getElementById("systemThemeBackgroundStyles")) return;
+    const styleId = "systemThemeBackgroundStyles";
+    const existing = document.getElementById(styleId);
+    if (existing) existing.remove();
 
     const style = document.createElement("style");
-    style.id = "systemThemeBackgroundStyles";
+    style.id = styleId;
     style.textContent = `
             .system-theme-background {
                 --bg-color: #ffffff;
@@ -28,7 +30,7 @@ function ensureBackgroundStyles() {
             }
 
             .system-theme-background.low-power .fui-svg {
-                opacity: 0.5;
+                opacity: 0.85;
                 shape-rendering: crispEdges;
             }
 
@@ -94,15 +96,15 @@ function ensureBackgroundStyles() {
                 position: absolute;
                 bottom: 36px;
                 right: 48px;
-                background: var(--alert-color);
-                color: var(--data-primary);
+                background: var(--bg);
+                color: var(--color-primary);
                 padding: 8px 16px;
                 font-size: 10px;
                 font-weight: 800;
                 letter-spacing: 0.15rem;
                 text-transform: uppercase;
                 border-left: 6px solid var(--data-primary);
-                box-shadow: -5px -5px 0 rgba(0, 0, 0, 0.15);
+                box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.15);
                 font-family: "JetBrains Mono", monospace, sans-serif;
             }
 
@@ -128,8 +130,30 @@ function ensureBackgroundStyles() {
     document.head.appendChild(style);
 }
 
+function syncSystemThemeBackgroundShadow() {
+    const lineGroup = document.querySelector("#systemThemeBackground .line-group");
+    if (!lineGroup) return;
+
+    const isDark = document.body.getAttribute("data-theme") === "dark" ||
+        document.documentElement.hasAttribute("dark-theme");
+    lineGroup.setAttribute(
+        "filter",
+        isDark ? "url(#fui-line-shadow-dark)" : "url(#fui-line-shadow-light)"
+    );
+}
+
+function observeSystemThemeBackgroundShadow() {
+    if (window.__systemThemeBackgroundShadowObserver) return;
+
+    const observer = new MutationObserver(() => syncSystemThemeBackgroundShadow());
+    observer.observe(document.body, { attributes: true, attributeFilter: ["data-theme"] });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["dark-theme"] });
+    window.__systemThemeBackgroundShadowObserver = observer;
+}
+
 function mountSystemThemeBackground() {
-    if (document.getElementById("systemThemeBackground")) return;
+    const existing = document.getElementById("systemThemeBackground");
+    if (existing) existing.remove();
 
     ensureBackgroundStyles();
     document.body.setAttribute("data-performance", "low");
@@ -147,10 +171,29 @@ function mountSystemThemeBackground() {
                         <line x1="50" y1="45" x2="50" y2="55" stroke="var(--inactive-color)" stroke-width="1" opacity="0.3" />
                         <line x1="45" y1="50" x2="55" y2="50" stroke="var(--inactive-color)" stroke-width="1" opacity="0.3" />
                     </pattern>
+                    <filter id="fui-line-shadow-light" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+                        <feOffset in="SourceAlpha" dx="8" dy="4" result="offset" />
+                        <feFlood flood-color="#000000" flood-opacity="0.35" result="color" />
+                        <feComposite in="color" in2="offset" operator="in" result="shadow" />
+                        <feMerge>
+                            <feMergeNode in="shadow" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                    <filter id="fui-line-shadow-dark" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+                        <feOffset in="SourceAlpha" dx="8" dy="4" result="offset" />
+                        <feFlood flood-color="#000000" flood-opacity="0.55" result="color" />
+                        <feComposite in="color" in2="offset" operator="in" result="shadow" />
+                        <feMerge>
+                            <feMergeNode in="shadow" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
                 </defs>
 
                 <rect class="fui-grid-layer" width="100%" height="100%" fill="url(#crossgrid)" />
 
+                <g class="fui-shapes line-group" fill="none" fill-rule="evenodd" filter="url(#fui-line-shadow-light)">
                 <polyline points="100,300 100,100 600,100 650,150" stroke="var(--data-primary)" stroke-width="2" fill="none" stroke-dasharray="200 10 10 10 500" />
                 <line x1="100" y1="150" x2="120" y2="150" stroke="var(--data-primary)" stroke-width="2" />
                 <line x1="100" y1="200" x2="110" y2="200" stroke="var(--data-primary)" stroke-width="2" />
@@ -191,6 +234,7 @@ function mountSystemThemeBackground() {
                 <circle cx="1500" cy="900" r="6" fill="var(--alert-color)" />
                 <rect x="1400" y="820" width="20" height="20" fill="none" stroke="var(--data-secondary)" stroke-width="2" />
                 <line x1="1400" y1="820" x2="1420" y2="840" stroke="var(--data-secondary)" stroke-width="2" />
+                </g>
             </svg>
 
             <div class="fui-hud-text" data-fui-left style="bottom: 60px; left: 80px;">
@@ -210,6 +254,9 @@ function mountSystemThemeBackground() {
         `;
 
     document.body.prepend(container);
+    syncSystemThemeBackgroundShadow();
+    observeSystemThemeBackgroundShadow();
+
     if (SYSTEM_BACKGROUND_LOW_POWER) {
         container.classList.add("low-power");
         container.querySelectorAll(".fui-svg [style*='animation']").forEach((node) => {
@@ -329,6 +376,7 @@ function connectSystemThemeBackground() {
     // Aktualizacja tylko przy odswiezeniu strony.
     const themeObserver = new MutationObserver(() => {
         updateSystemThemeBackgroundHUD();
+        syncSystemThemeBackgroundShadow();
     });
     themeObserver.observe(document.body, { attributes: true, attributeFilter: ["data-theme"] });
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["dark-theme"] });

@@ -177,7 +177,7 @@ class DateTime {
                 </span>
             </button>
             <div class="vertical-separator orange"></div>
-            <button class="datetime-nav-button" onclick="window.open('https://playliveos.carrd.co/', '_blank')" title="Visit PlayLiveOS">
+            <button type="button" class="datetime-nav-button" id="cyberRadioNavBtn" title="Cyber Radio V8">
                 <div class="corner top-left"></div>
                 <div class="corner top-right"></div>
                 <div class="corner bottom-left"></div>
@@ -274,6 +274,10 @@ class Footer {
                     <span class="footer-version">v2.1.0 Dev</span>
                 </div>
                 <div class="footer-section">
+                    <a href="#" class="footer-info" onclick="openCyberRadioModal(); return false;">
+                        CYBER RADIO
+                        <i class="fas fa-broadcast-tower ml-2"></i>
+                    </a>
                     <a href="#" class="footer-info" onclick="openPrivacyModal()">
                         PRIVACY POLICY
                         <i class="fas fa-info-circle ml-2"></i>
@@ -1248,24 +1252,29 @@ function createLoginConsole() {
     loginConsole = document.createElement('div');
     loginConsole.className = 'login-console hidden';
     loginConsole.innerHTML = `
-        <div class="console-header">
-            <span class="console-title">
+        <div class="modal-header">
+            <span class="modal-title">
                 <i class="fas fa-terminal"></i>
-                Login Console - Corporate Dashboard
+                Access
             </span>
-            <button class="console-close" onclick="hideLoginConsole()">
+            <button type="button" class="modal-close" onclick="hideLoginConsole()" aria-label="Zamknij">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         <div class="console-body">
             <div class="console-prompt">
                 <span class="prompt-symbol">$</span>
-                <span class="prompt-text">Please enter password to access AI Link Hub</span>
+                <span class="prompt-text">Please enter password to access Link Hub</span>
             </div>
             <form class="console-form" id="consoleLoginForm">
                 <div class="console-input-group">
-                    <span class="input-label">password:</span>
-                    <input type="password" id="consolePassword" name="password" required autocomplete="current-password" autofocus>
+                    <span class="input-label">Pass:</span>
+                    <div class="console-input-wrap">
+                        <input type="password" id="consolePassword" placeholder="Enter your password" name="password" required autocomplete="current-password" autofocus>
+                        <button type="button" class="console-input-clear" id="consoleClearBtn" title="Wyczyść hasło i komunikaty">
+                            <i class="fas fa-eraser"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="console-actions">
                     <button type="submit" class="console-btn">
@@ -1277,7 +1286,7 @@ function createLoginConsole() {
             <div class="console-output" id="consoleOutput"></div>
             <div class="console-help">
                 <div class="help-line">Available commands:</div>
-                <div class="help-line">• login - authenticate user</div>
+                <div class="help-line">• Pass - authenticate user</div>
                 <div class="help-line">• clear - clear console output</div>
                 <div class="help-line">• exit - close console (Esc)</div>
             </div>
@@ -1290,8 +1299,67 @@ function createLoginConsole() {
     const form = loginConsole.querySelector('#consoleLoginForm');
     form.addEventListener('submit', handleConsoleLogin);
 
+    loginConsole.addEventListener('click', (e) => {
+        if (e.target.closest('#consoleClearBtn')) {
+            clearConsoleOutput(e);
+        }
+    });
+
     // Setup keyboard shortcuts
     setupConsoleKeyboardShortcuts();
+}
+
+const CONSOLE_REDIRECT_SEC = 3;
+const CONSOLE_REDIRECT_URL = 'https://linkosi.carrd.co/#';
+let consoleRedirectTimer = null;
+
+function clearConsoleRedirectTimer() {
+    if (consoleRedirectTimer) {
+        clearInterval(consoleRedirectTimer);
+        consoleRedirectTimer = null;
+    }
+}
+
+function startConsoleRedirectCountdown(onDone) {
+    clearConsoleRedirectTimer();
+
+    const countdownEl = document.getElementById('consoleCountdown');
+    let remaining = CONSOLE_REDIRECT_SEC;
+
+    const render = () => {
+        if (countdownEl) countdownEl.textContent = String(remaining);
+    };
+
+    render();
+    consoleRedirectTimer = setInterval(() => {
+        remaining -= 1;
+        if (remaining <= 0) {
+            clearConsoleRedirectTimer();
+            onDone();
+            return;
+        }
+        render();
+    }, 1000);
+}
+
+function clearConsoleOutput(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    if (!loginConsole) return;
+
+    clearConsoleRedirectTimer();
+
+    const output = loginConsole.querySelector('#consoleOutput');
+    const password = loginConsole.querySelector('#consolePassword');
+
+    if (output) output.innerHTML = '';
+    if (password) {
+        password.value = '';
+        password.focus();
+    }
 }
 
 function showLoginConsole() {
@@ -1306,14 +1374,11 @@ function showLoginConsole() {
         setTimeout(() => passwordInput.focus(), 100);
     }
 
-    // Clear previous output
-    const output = loginConsole.querySelector('#consoleOutput');
-    if (output) {
-        output.innerHTML = '';
-    }
+    clearConsoleOutput();
 }
 
 function hideLoginConsole() {
+    clearConsoleRedirectTimer();
     if (loginConsole) {
         loginConsole.classList.remove('active');
         loginConsole.classList.add('hidden');
@@ -1332,27 +1397,20 @@ function handleConsoleLogin(e) {
     const result = authManager.login(password);
 
     if (result.success) {
-        // Show success in console
         output.innerHTML = `
-            <div class="output-line success">✓ Authentication successful</div>
-            <div class="output-line">User: ${result.user.username}</div>
-            <div class="output-line">Role: ${result.user.role}</div>
-            <div class="output-line">Redirecting to AI Link Hub...</div>
-            <div class="output-line loading">Opening new tab in 3 seconds...</div>
+            <div class="output-line success"><i class="fas fa-check-circle"></i> Zalogowano</div>
+       
+            <div class="output-line">Otwieranie za <span id="consoleCountdown">${CONSOLE_REDIRECT_SEC}</span>s…</div>
         `;
 
-        // Open AI Link Hub in new tab after delay
-        setTimeout(() => {
-            window.open('https://linkosi.carrd.co/#', '_blank');
+        startConsoleRedirectCountdown(() => {
+            window.open(CONSOLE_REDIRECT_URL, '_blank');
             hideLoginConsole();
-        }, 3000);
+        });
 
     } else {
-        // Show error in console
         output.innerHTML = `
-            <div class="output-line error">✗ Authentication failed</div>
-            <div class="output-line error">${result.error}</div>
-            <div class="output-line">Please try again...</div>
+            <div class="output-line error"><i class="fas fa-times-circle"></i> ${result.error}</div>
         `;
     }
 }
