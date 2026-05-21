@@ -201,6 +201,7 @@ body[data-theme="dark"] .cyber-radio-root {
 .cyber-radio-station-genre {
     font-size: 0.55rem;
     color: var(--cr-highlight);
+    display: flex;
 }
 
 .cyber-radio-console-col {
