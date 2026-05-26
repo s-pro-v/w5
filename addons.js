@@ -68,7 +68,7 @@ const addonsConfig = {
         },
         {
             name: "ToolCopy Side Panel",
-            description: "Panel boczny z narzędziami do kopiowania 8.1.3",
+            description: "Panel boczny z narzędziami do kopiowania 8.2.1",
             icon: "https://lh3.googleusercontent.com/nQq__yCwHmnPnPqgOVUgfEKsXyF-fdp5OA-amuPGh_zHEN2_jQIOUl5Cu0fxsJUVmkXxKoDeEOVldX1vN_ygcFuziiU=s60",
             browsers: {
                 chrome: "https://chrome.google.com/webstore/detail/kjlnnfcikdiekpiojcgoapcbhonafffk"
