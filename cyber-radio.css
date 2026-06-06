@@ -119,7 +119,7 @@ body[data-theme="dark"] .cyber-radio-root {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    min-height: 0;
+    max-height: 560px;
     overflow: hidden;
 }
 
