@@ -629,7 +629,7 @@ function createLinkButton(title, markerColor, icon, url) {
         } else if (title.includes("PERMISSIONS")) {
             iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:multiple-neutral-2.svg" alt="Permissions" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-users-cog\\'></i>');"></span>`;
         } else if (title.includes("CONTGUARD")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://cgi.contguard.com&size=32" alt="CONTGUARD" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-cogs\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://cgi.contguard.com/favicon.ico" alt="CONTGUARD" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-cogs\\'></i>');"></span>`;
         } else if (title.includes("FMC TRACK")) {
             iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:delivery-truck-cargo.svg" alt="FMC Track" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-truck-loading\\'></i>');"></span>`;
         } else if (title.includes("FMC")) {
