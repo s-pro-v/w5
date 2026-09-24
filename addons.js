@@ -1,3 +1,4 @@
+
 // Addons functionality for the Corporate Dashboard
 // This file contains utility functions and configurations for browser addons
 
@@ -33,13 +34,13 @@ const addonsConfig = {
             }
         },
         {
-            name: "Tampermonkey",
+            name: "Violentmonkey",
             description: "Menedżer skryptów użytkownika",
-            icon: "https://addons.mozilla.org/user-media/addon_icons/683/683490-64.png",
+            icon: "https://addons.mozilla.org/user-media/addon_icons/797/797378-64.png",
             browsers: {
-                firefox: "https://addons.mozilla.org/pl/firefox/addon/tampermonkey/",
-                edge: "https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd",
-                chrome: "https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo"
+                firefox: "https://addons.mozilla.org/pl/firefox/addon/violentmonkey/",
+                edge: "https://microsoftedge.microsoft.com/addons/detail/violentmonkey/eeagobfjdenkkddmbclomhiblgggliao",
+                chrome: "https://chromewebstore.google.com/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag"
             }
         },
         {
@@ -120,4 +121,3 @@ const addonsUtils = {
 // Make available globally
 window.addonsConfig = addonsConfig;
 window.addonsUtils = addonsUtils;
-

@@ -176,7 +176,6 @@ class DateTime {
                     <i class="fas fa-user-lock hidden" title="Console (FAS backup)" style="font-size: 1.2em;"></i>
                 </span>
             </button>
-            <div class="vertical-separator orange"></div>
             <button type="button" class="datetime-nav-button" id="cyberRadioNavBtn" title="Cyber Radio V8">
                 <div class="corner top-left"></div>
                 <div class="corner top-right"></div>
@@ -192,8 +191,7 @@ class DateTime {
                     <i class="fas fa-music hidden" title="Music (FAS backup)" style="font-size: 1.2em;"></i>
                 </span>
             </button>
-            <div class="vertical-separator orange"></div>
-            <button class="datetime-nav-button" onclick="window.open('https://quip.com/mlWpALvnGSt5/Pliki', '_blank')" title="Linki Print">
+            <button class="datetime-nav-button" onclick="window.open('https://drive.google.com/drive/folders/14Pkm3HmebGhJ9jQppz1InbNxYQiWmq_X', '_blank')" title="Linki Print">
                 <div class="corner top-left"></div>
                 <div class="corner top-right"></div>
                 <div class="corner bottom-left"></div>
@@ -208,7 +206,6 @@ class DateTime {
                     <i class="fas fa-print hidden" title="Linki Print (FAS backup)" style="font-size: 1.2em;"></i>
                 </span>
             </button>
-            <div class="vertical-separator orange"></div>
             <button class="datetime-nav-button e" onclick="window.open('https://exd9.carrd.co/', '_blank')" title="Lista Ewakuacji">
                 <div class="corner top-left"></div>
                 <div class="corner top-right"></div>
