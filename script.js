@@ -1,5 +1,4 @@
 // Data constants are now imported from constants.js
-
 // Authentication Manager
 class AuthManager {
     constructor() {
