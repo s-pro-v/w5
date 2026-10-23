@@ -116,116 +116,100 @@ class DateTime {
         }
     }
 
+    getNavButtonsConfig(now) {
+        return [
+            {
+                id: "userThemeToggle",
+                title: "Theme",
+                imgSrc: this.themeToggle?.isDark
+                    ? "https://api.iconify.design/line-md/sunny-twotone-loop.svg"
+                    : "https://api.iconify.design/line-md/sunny-outline-to-moon-loop-transition.svg",
+                imgAlt: this.themeToggle?.isDark ? "Tryb jasny" : "Tryb ciemny",
+                fasIcon: this.themeToggle?.isDark ? "fa-sun" : "fa-moon",
+                fasSize: "1.35em",
+                action: () => (typeof toggleUserTheme === "function" ? toggleUserTheme() : this.toggleTheme?.())
+            },
+            {
+                title: "Narzędzia",
+                imgSrc: "https://api.iconify.design/material-icon-theme/folder-plugin-open.svg",
+                imgAlt: "Tools",
+                fasIcon: "fa-tools",
+                fasSize: "1.2em",
+                action: () => (typeof navigateToSubpage === "function" ? navigateToSubpage() : null)
+            },
+            {
+                title: "Open Login Console (Ctrl+L)",
+                imgSrc: "https://img.icons8.com/external-anggara-flat-anggara-putra/64/external-password-security-security-anggara-flat-anggara-putra.png",
+                imgAlt: "Console",
+                fasIcon: "fa-user-lock",
+                fasSize: "1.2em",
+                action: () => (typeof showLoginConsole === "function" ? showLoginConsole() : null)
+            },
+            {
+                id: "cyberRadioNavBtn",
+                title: "Cyber Radio V8",
+                imgSrc: "https://img.icons8.com/papercut/60/audio-wave2.png",
+                imgAlt: "Music",
+                fasIcon: "fa-music",
+                fasSize: "1.2em",
+                action: () => this.handleCyberRadio?.()
+            },
+            {
+                title: "Linki Print",
+                imgSrc: "https://api.iconify.design/streamline-ultimate-color/print-text.svg",
+                imgAlt: "Linki Print",
+                fasIcon: "fa-print",
+                fasSize: "1.2em",
+                action: () => window.open("https://drive.google.com/drive/folders/14Pkm3HmebGhJ9jQppz1InbNxYQiWmq_X", "_blank")
+            },
+            {
+                className: "e",
+                title: "Lista Ewakuacji",
+                imgSrc: "https://api.iconify.design/streamline-ultimate-color/multiple-users-1.svg",
+                imgAlt: "Users",
+                fasIcon: "fa-users",
+                fasSize: "1.2em",
+                action: () => window.open("https://exd9.carrd.co/", "_blank")
+            }
+        ];
+    }
+
+    createCornerNodes() {
+        return ["top-left", "top-right", "bottom-left", "bottom-right"]
+            .map(pos => `<div class="corner ${pos}"></div>`)
+            .join("");
+    }
+
     render() {
         const now = new Date();
 
         const container = document.createElement("div");
         container.className = "datetime-container";
 
-        // Always show theme toggle and navigation - no authentication required
-        const controlsInfo = `<div class="user-info">
-            <button class="datetime-nav-button" onclick="toggleUserTheme()" id="userThemeToggle" title="Theme">
-                <div class="corner top-left"></div>
-                <div class="corner top-right"></div>
-                <div class="corner bottom-left"></div>
-                <div class="corner bottom-right"></div>
-                <span class="theme-toggle-icon icon-holder">
-                    <img 
-                        src="${this.themeToggle.isDark
-                ? 'https://api.iconify.design/line-md:sunny-twotone-loop.svg'
-                : 'https://api.iconify.design/line-md:sunny-outline-to-moon-loop-transition.svg'
-            }"
-                        alt="${this.themeToggle.isDark ? 'Tryb jasny' : 'Tryb ciemny'}"
-                        class="nav-img"
-                        onerror="this.style.display='none';this.parentElement.querySelector('.fas')?.classList.remove('hidden');"
-                    >
-                    <i 
-                        class="fas ${this.themeToggle.isDark ? 'fa-sun' : 'fa-moon'} hidden"
-                        title="${this.themeToggle.isDark ? 'Tryb jasny (ikona awaryjna)' : 'Tryb ciemny (ikona awaryjna)'}"
-                        style="font-size: 1.35em;"
-                    ></i>
-                </span>
-            </button>
-            <button class="datetime-nav-button" onclick="navigateToSubpage()" title="Narzędzia">
-                <div class="corner top-left"></div>
-                <div class="corner top-right"></div>
-                <div class="corner bottom-left"></div>
-                <div class="corner bottom-right"></div>
-                <span class="icon-holder">
-                    <img 
-                        src="https://api.iconify.design/material-icon-theme:folder-plugin-open.svg"
-                        alt="Tools"
-                        class="nav-img"
-                        onerror="this.style.display='none';this.parentElement.querySelector('.fas')?.classList.remove('hidden');"
-                    >
-                    <i class="fas fa-tools hidden" title="Tools (FAS backup)" style="font-size: 1.2em;"></i>
-                </span>
-            </button>
-            <button class="datetime-nav-button" onclick="showLoginConsole()" title="Open Login Console (Ctrl+L)">
-                <div class="corner top-left"></div>
-                <div class="corner top-right"></div>
-                <div class="corner bottom-left"></div>
-                <div class="corner bottom-right"></div>
-                <span class="icon-holder">
-                    <img 
-                        src="https://img.icons8.com/external-anggara-flat-anggara-putra/64/external-password-security-security-anggara-flat-anggara-putra.png"
-                        alt="Console"
-                        class="nav-img"
-                        onerror="this.style.display='none';this.parentElement.querySelector('.fas')?.classList.remove('hidden');"
-                    >
-                    <i class="fas fa-user-lock hidden" title="Console (FAS backup)" style="font-size: 1.2em;"></i>
-                </span>
-            </button>
-            <button type="button" class="datetime-nav-button" id="cyberRadioNavBtn" title="Cyber Radio V8">
-                <div class="corner top-left"></div>
-                <div class="corner top-right"></div>
-                <div class="corner bottom-left"></div>
-                <div class="corner bottom-right"></div>
-                <span class="icon-holder">
-                    <img 
-                        src="https://img.icons8.com/papercut/60/audio-wave2.png"
-                        alt="Music"
-                        class="nav-img"
-                        onerror="this.style.display='none';this.parentElement.querySelector('.fas')?.classList.remove('hidden');"
-                    >
-                    <i class="fas fa-music hidden" title="Music (FAS backup)" style="font-size: 1.2em;"></i>
-                </span>
-            </button>
-            <button class="datetime-nav-button" onclick="window.open('https://drive.google.com/drive/folders/14Pkm3HmebGhJ9jQppz1InbNxYQiWmq_X', '_blank')" title="Linki Print">
-                <div class="corner top-left"></div>
-                <div class="corner top-right"></div>
-                <div class="corner bottom-left"></div>
-                <div class="corner bottom-right"></div>
-                <span class="icon-holder">
-                    <img 
-                        src="https://api.iconify.design/streamline-ultimate-color:print-text.svg"
-                        alt="Linki Print"
-                        class="nav-img"
-                        onerror="this.style.display='none';this.parentElement.querySelector('.fas')?.classList.remove('hidden');"
-                    >
-                    <i class="fas fa-print hidden" title="Linki Print (FAS backup)" style="font-size: 1.2em;"></i>
-                </span>
-            </button>
-            <button class="datetime-nav-button e" onclick="window.open('https://exd9.carrd.co/', '_blank')" title="Lista Ewakuacji">
-                <div class="corner top-left"></div>
-                <div class="corner top-right"></div>
-                <div class="corner bottom-left"></div>
-                <div class="corner bottom-right"></div>
-                <span class="icon-holder">
-                    <img 
-                        src="https://api.iconify.design/streamline-ultimate-color:multiple-users-1.svg"
-                        alt="Users"
-                        class="nav-img"
-                        onerror="this.style.display='none';this.parentElement.querySelector('.fas')?.classList.remove('hidden');"
-                    >
-                    <i class="fas fa-users hidden" title="Users (FAS backup)" style="font-size: 1.2em;"></i>
-                </span>
-            </button>
-        </div>
+        const buttonsConfig = this.getNavButtonsConfig(now);
+        const cornersHtml = this.createCornerNodes();
+
+        // 1. Generowanie paska narzędziowego
+        const controlsHtml = `
+            <div class="user-info">
+                ${buttonsConfig.map((btn, idx) => `
+                    <button type="button" 
+                            class="datetime-nav-button ${btn.className || ''}" 
+                            data-btn-index="${idx}"
+                            ${btn.id ? `id="${btn.id}"` : ''} 
+                            title="${btn.title}">
+                        ${cornersHtml}
+                        <span class="icon-holder ${btn.id === 'userThemeToggle' ? 'theme-toggle-icon' : ''}">
+                            <img src="${btn.imgSrc}" alt="${btn.imgAlt}" class="nav-img">
+                            <i class="fas ${btn.fasIcon} hidden" style="font-size: ${btn.fasSize};" title="${btn.title} (FAS backup)"></i>
+                        </span>
+                    </button>
+                `).join('')}
+            </div>
         `;
 
-        container.innerHTML = `
-           ${controlsInfo}
+        // 2. Moduł zegara i daty
+        const contentHtml = `
             <div class="datetime-content">
                 <div class="datetime-icon">
                     <i class="fas fa-clock"></i>
@@ -237,6 +221,30 @@ class DateTime {
             </div>
         `;
 
+        container.innerHTML = `${controlsHtml}${contentHtml}`;
+
+        // 3. Bezpieczna delegacja zdarzeń dla błędów ikon (fallback)
+        container.querySelectorAll(".nav-img").forEach(img => {
+            img.addEventListener("error", () => {
+                img.style.display = "none";
+                const fallbackIcon = img.parentElement.querySelector(".fas");
+                if (fallbackIcon) {
+                    fallbackIcon.classList.remove("hidden");
+                }
+            }, { once: true });
+        });
+
+        // 4. Delegacja zdarzeń kliknięcia (czyste bindy zamiast atrybutów inline)
+        const userInfoContainer = container.querySelector(".user-info");
+        userInfoContainer.addEventListener("click", (e) => {
+            const btn = e.target.closest(".datetime-nav-button");
+            if (!btn) return;
+            const idx = btn.dataset.btnIndex;
+            if (idx !== undefined && buttonsConfig[idx]?.action) {
+                buttonsConfig[idx].action();
+            }
+        });
+
         this.dateTimeElement = container;
         this.timeElement = container.querySelector(".datetime-time");
         this.dateElement = container.querySelector(".datetime-date");
@@ -245,9 +253,12 @@ class DateTime {
     }
 
     destroy() {
-        this.stopClock();
+        this.stopClock?.();
         if (this.dateTimeElement) {
             this.dateTimeElement.remove();
+            this.dateTimeElement = null;
+            this.timeElement = null;
+            this.dateElement = null;
         }
     }
 }
@@ -594,47 +605,47 @@ function createLinkButton(title, markerColor, icon, url) {
     let iconHTML = "";
     if (icon) {
         if (title.includes("CHAT OPS")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-sharp-color:desktop-chat-flat.svg" alt="Chat Ops" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-comments\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-sharp-color/desktop-chat-flat.svg" alt="Chat Ops" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-comments\\'></i>');"></span>`;
         } else if (title.includes("QUIP")) {
             iconHTML = `<span class="link-button-icon"><img src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://quip.com&size=32" alt="Quip" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-clipboard\\'></i>');"></span>`;
         } else if (title.includes("EXCEL IN")) {
             iconHTML = `<span class="link-button-icon"><img src="https://img.icons8.com/fluency/48/microsoft-excel-2025.png" alt="Excel" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-file-excel\\'></i>');"></span>`;
         } else if (title.includes("OUTBOUND")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:shipment-tracking.svg" alt="Outbound" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-truck\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color/shipment-tracking.svg" alt="Outbound" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-truck\\'></i>');"></span>`;
         } else if (title.includes("GTDR")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/emojione:mobile-phone.svg" alt="GTDR" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-mobile-alt\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/emojione/mobile-phone.svg" alt="GTDR" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-mobile-alt\\'></i>');"></span>`;
         } else if (title.includes("DEVICE ACTIVATION")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/openmoji:mobile-info.svg" alt="Device Activation" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-mobile\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/openmoji/mobile-info.svg" alt="Device Activation" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-mobile\\'></i>');"></span>`;
         } else if (title.includes("PASSWORD RESET")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:laptop-user.svg" alt="Password Reset" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-unlock-alt\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color/laptop-user.svg" alt="Password Reset" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-unlock-alt\\'></i>');"></span>`;
         } else if (title.includes("PANORAMA")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/noto:bar-chart.svg" alt="Panorama" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-chart-bar\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/noto/bar-chart.svg" alt="Panorama" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-chart-bar\\'></i>');"></span>`;
         } else if (title.includes("YARD 360")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:delivery-truck-clock.svg" alt="Yard 360" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-clock\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color/delivery-truck-clock.svg" alt="Yard 360" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-clock\\'></i>');"></span>`;
         } else if (title.includes("SEZAM")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:truck-empty-1.svg" alt="Sezam" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-truck-moving\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color/truck-empty-1.svg" alt="Sezam" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-truck-moving\\'></i>');"></span>`;
         } else if (title.includes("YARD MANAGEMENT")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:network-pin.svg" alt="Yard Management" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-map-marker-alt\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color/network-pin.svg" alt="Yard Management" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-map-marker-alt\\'></i>');"></span>`;
         } else if (title.includes("EVENT HISTORY")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:calendar-date.svg" alt="Event History" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-calendar-alt\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color/calendar-date.svg" alt="Event History" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-calendar-alt\\'></i>');"></span>`;
         } else if (title.includes("DOCKMASTER SEARCH")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:shipment-search.svg" alt="Dockmaster Search" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-search\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color/shipment-search.svg" alt="Dockmaster Search" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-search\\'></i>');"></span>`;
         } else if (title.includes("DOCKMASTER")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:shipment-clock.svg" alt="Dockmaster" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-clock\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color/shipment-clock.svg" alt="Dockmaster" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-clock\\'></i>');"></span>`;
         } else if (title.includes("ISSUES")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:professions-man-construction-2.svg" alt="Issues" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-exclamation-circle\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color/professions-man-construction-2.svg" alt="Issues" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-exclamation-circle\\'></i>');"></span>`;
         } else if (title.includes("PERMISSIONS")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:multiple-neutral-2.svg" alt="Permissions" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-users-cog\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color/multiple-neutral-2.svg" alt="Permissions" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-users-cog\\'></i>');"></span>`;
         } else if (title.includes("CONTGUARD")) {
             iconHTML = `<span class="link-button-icon"><img src="https://cgi.contguard.com/favicon.ico" alt="CONTGUARD" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-cogs\\'></i>');"></span>`;
         } else if (title.includes("FMC TRACK")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:delivery-truck-cargo.svg" alt="FMC Track" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-truck-loading\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color/delivery-truck-cargo.svg" alt="FMC Track" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-truck-loading\\'></i>');"></span>`;
         } else if (title.includes("FMC")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:antenna.svg" alt="FMC" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-broadcast-tower\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color/antenna.svg" alt="FMC" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-broadcast-tower\\'></i>');"></span>`;
         } else if (title.includes("FCLM PORTAL")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/vscode-icons:file-type-befunge.svg" alt="FCLM Portal" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-warehouse\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/vscode-icons/file-type-befunge.svg" alt="FCLM Portal" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-warehouse\\'></i>');"></span>`;
         } else if (title.includes("AAP")) {
-            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color:app-window-code.svg" alt="AAP" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-code\\'></i>');"></span>`;
+            iconHTML = `<span class="link-button-icon"><img src="https://api.iconify.design/streamline-ultimate-color/app-window-code.svg" alt="AAP" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fas fa-code\\'></i>');"></span>`;
         } else if (title.includes("M365")) {
             iconHTML = `<span class="link-button-icon"><img src="https://img.icons8.com/fluency/48/microsoft-copilot.png" alt="M365" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\\'fab fa-microsoft\\'></i>');"></span>`;
         } else if (title.includes("OUTLOOK")) {
@@ -958,7 +969,7 @@ function updateAllThemeButtons(theme) {
                 isDark
                     ? `
                     <img 
-                        src="https://api.iconify.design/line-md:sunny-twotone-loop.svg" 
+                        src="https://api.iconify.design/line-md/sunny-twotone-loop.svg" 
                         alt="Light Mode"
                         class="nav-img"
                         onerror="this.style.display='none';this.parentElement.querySelector('.fas')?.classList.remove('hidden');"
@@ -967,7 +978,7 @@ function updateAllThemeButtons(theme) {
                   `
                     : `
                     <img 
-                        src="https://api.iconify.design/line-md:sunny-outline-to-moon-loop-transition.svg" 
+                        src="https://api.iconify.design/line-md/sunny-outline-to-moon-loop-transition.svg" 
                         alt="Dark Mode"
                         class="nav-img"
                         onerror="this.style.display='none';this.parentElement.querySelector('.fas')?.classList.remove('hidden');"
@@ -987,15 +998,15 @@ function navigateToSubpage() {
     // SVG (Iconify) + fallback FAS classes for browser icons
     const browserIcons = {
         firefox: {
-            svg: 'https://api.iconify.design/devicon:firefox.svg',
+            svg: 'https://api.iconify.design/devicon/firefox.svg',
             fas: 'fa-firefox-browser'
         },
         edge: {
-            svg: 'https://api.iconify.design/logos:microsoft-edge.svg',
+            svg: 'https://api.iconify.design/logos/microsoft-edge.svg',
             fas: 'fa-edge'
         },
         chrome: {
-            svg: 'https://api.iconify.design/devicon:chrome.svg',
+            svg: 'https://api.iconify.design/devicon/chrome.svg',
             fas: 'fa-chrome'
         }
     };
